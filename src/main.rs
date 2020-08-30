@@ -1,7 +1,7 @@
-use futures::StreamExt;
-use telegram_bot::*;
 use std::env;
 
+use futures::StreamExt;
+use telegram_bot::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
