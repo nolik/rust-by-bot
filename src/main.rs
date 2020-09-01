@@ -1,6 +1,7 @@
 use std::env;
 
 use futures::StreamExt;
+use regex::Regex;
 use telegram_bot::*;
 
 #[tokio::main]
@@ -18,12 +19,11 @@ async fn main() -> Result<(), Error> {
                 // Print received text message to stdout.
                 println!("<{}>: {}", &message.from.first_name, data);
 
-                // Answer message with "Hi".
-                api.send(message.text_reply(format!(
-                    "Hi, {}! You just wrote '{}'",
-                    &message.from.first_name, data
-                )))
-                    .await?;
+                if re.is_match(data) {
+                    api.send(message.text_reply(format!(
+                        "Hi, {}! You just wrote smth about Rust!", &message.from.first_name)))
+                        .await?;
+                }
             }
         }
     }
