@@ -6,8 +6,10 @@ use telegram_bot::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+
     let token = env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN not set");
     let api = Api::new(token);
+    let re = Regex::new(r"Rust|rust|Раст|раст").unwrap();
 
     // Fetch new updates via long poll method
     let mut stream = api.stream();
