@@ -1,12 +1,15 @@
 use std::env;
 
 use futures::StreamExt;
+use regex::Regex;
 use telegram_bot::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+
     let token = env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN not set");
     let api = Api::new(token);
+    let re = Regex::new(r"Rust|rust|Раст|раст").unwrap();
 
     // Fetch new updates via long poll method
     let mut stream = api.stream();
@@ -18,12 +21,11 @@ async fn main() -> Result<(), Error> {
                 // Print received text message to stdout.
                 println!("<{}>: {}", &message.from.first_name, data);
 
-                // Answer message with "Hi".
-                api.send(message.text_reply(format!(
-                    "Hi, {}! You just wrote '{}'",
-                    &message.from.first_name, data
-                )))
-                    .await?;
+                if re.is_match(data) {
+                    api.send(message.text_reply(format!(
+                        "Hi, {}! You just wrote smth about Rust!", &message.from.first_name)))
+                        .await?;
+                }
             }
         }
     }
