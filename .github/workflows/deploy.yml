@@ -9,26 +9,16 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  job1:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: Build
-          run: cargo build --verbose
-        - name: Run tests
-          run: cargo test --verbose
-  job2:
-    build:
-      runs-on: ubuntu-latest
-      needs: job1
-      steps:
-        - uses: actions/checkout@v2
-        - uses: akhileshns/heroku-deploy@v3.4.6 # This is the action
-          with:
-            heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-            heroku_app_name: "rust-by-bot"
-            heroku_email: "nolik03@gmail.com"
-            usedocker: true
-          env:
-            TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
+  build:
+    runs-on: ubuntu-latest
+    needs: job1
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.4.6 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "rust-by-bot"
+          heroku_email: "nolik03@gmail.com"
+          usedocker: true
+        env:
+          TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
