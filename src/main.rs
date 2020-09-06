@@ -30,8 +30,9 @@ async fn main() -> Result<(), Error> {
                 if re.is_match(data) {
                     api.send(message.text_reply(format!(
                         "Hi, {}! You just wrote smth about Rust! \nBe careful, \
-                         {} science last incident.",
-                        &message.from.first_name, diff
+                         {} days since last incident.",
+                        &message.from.first_name,
+                        diff.num_days()
                     )))
                     .await?;
 
