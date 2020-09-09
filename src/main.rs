@@ -6,7 +6,7 @@ use regex::Regex;
 use telegram_bot::*;
 
 const HOURS_PER_DAY: i64 = 24;
-const MINUTES_PER_DAY: i64 = 1440;
+const MINUTES_PER_HOUR: i64 = 60;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -35,7 +35,7 @@ async fn main() -> Result<(), Error> {
                             &message.from.first_name,
                             time_diff.num_days(),
                             time_diff.num_hours() % HOURS_PER_DAY,
-                            time_diff.num_minutes() % MINUTES_PER_DAY
+                            time_diff.num_minutes() % MINUTES_PER_HOUR
                         )))
                         .await?;
 
