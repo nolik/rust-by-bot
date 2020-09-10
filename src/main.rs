@@ -12,7 +12,7 @@ const MINUTES_PER_HOUR: i64 = 60;
 async fn main() -> Result<(), Error> {
     let token = env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN not set");
     let api = Api::new(token);
-    let re = Regex::new(r"[RrРр]+[\\.\\_\\-\\\\#\\*\\\\\\+\\=]{0,2}[AaUuАа]+[\\.\\_\\-\\\\#\\*\\\\\\+\\=]{0,2}[СсSsСс]+[\\.\\_\\-\\\\#\\*\\\\\\+\\=]{0,2}[TtТт]").unwrap();
+    let re = Regex::new(r"\b[RrРр][AaUuАа][CcSsСс][TtТт]\b").unwrap();
     let min_time_diff = Duration::minutes(15);
     let mut last_date: DateTime<Utc> = Utc::now();
 
