@@ -1,20 +1,16 @@
 #[macro_use]
 extern crate diesel;
 
-mod connection;
+mod mention_dao;
 mod mentions;
 mod schema;
 
 use std::env;
 
-use crate::connection::establish_connection;
-use crate::mentions::Mention;
-use crate::schema::mentions::dsl::*;
-use chrono::{DateTime, Duration, NaiveDateTime, Utc};
-use diesel::RunQueryDsl;
+use crate::mention_dao::establish_connection;
+use chrono::{DateTime, Duration, NaiveDateTime, TimeZone, Utc};
 use futures::StreamExt;
 use regex::Regex;
-use std::ops::Sub;
 use telegram_bot::*;
 
 const HOURS_PER_DAY: i64 = 24;
@@ -26,8 +22,11 @@ async fn main() -> Result<(), Error> {
     let api = Api::new(token);
     let re = Regex::new(r"\b[RrРр][AaUuАа][CcSsСс][TtТт]\b").unwrap();
     let min_time_diff = Duration::minutes(15);
-    let mut last_date: DateTime<Utc> = Utc::now().sub(Duration::days(2));
     let connection = establish_connection();
+
+    // pool the latest mention time during app initialization
+    let last_mention_time = mention_dao::lead_earliest_mention_time(&connection);
+    let mut last_date = Utc.from_utc_datetime(&last_mention_time);
 
     // Fetch new updates via long poll method
     let mut stream = api.stream();
@@ -40,14 +39,6 @@ async fn main() -> Result<(), Error> {
                     let curr_native_date = NaiveDateTime::from_timestamp(*&message.date, 0);
                     let curr_date = DateTime::from_utc(curr_native_date, Utc);
                     let time_diff = curr_date.signed_duration_since(last_date);
-
-                    // Make a SQL request to load all mentions
-                    let results = mentions
-                        .load::<Mention>(&connection)
-                        .expect("Error loading mentions");
-                    for mention in results {
-                        println!("{}", mention.user_id)
-                    }
 
                     if time_diff > min_time_diff {
                         api.send(message.text_reply(format!(
@@ -62,6 +53,8 @@ async fn main() -> Result<(), Error> {
 
                         last_date = curr_date;
                     }
+
+                    mention_dao::create_mention(&connection, message.from.id);
                 }
             }
         }

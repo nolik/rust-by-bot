@@ -1,6 +1,6 @@
 CREATE TABLE mentions
 (
-    user_id SERIAL PRIMARY KEY,
+    user_id BIGSERIAL PRIMARY KEY,
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 

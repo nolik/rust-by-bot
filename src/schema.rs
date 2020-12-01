@@ -1,6 +1,6 @@
 table! {
     mentions (user_id) {
-        user_id -> Int4,
+        user_id -> Int8,
         updated_at -> Timestamp,
     }
 }
