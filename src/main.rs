@@ -1,13 +1,13 @@
 #[macro_use]
 extern crate diesel;
 
-mod mention_dao;
-mod mentions;
+mod mention_repository;
+mod models;
 mod schema;
 
 use std::env;
 
-use crate::mention_dao::establish_connection;
+use crate::mention_repository::establish_connection;
 use chrono::{DateTime, Duration, NaiveDateTime, TimeZone, Utc};
 use futures::StreamExt;
 use regex::Regex;
@@ -25,7 +25,7 @@ async fn main() -> Result<(), Error> {
     let connection = establish_connection();
 
     // pool the latest mention time during app initialization
-    let last_mention_time = mention_dao::lead_earliest_mention_time(&connection);
+    let last_mention_time = mention_repository::lead_earliest_mention_time(&connection);
     let mut last_date = Utc.from_utc_datetime(&last_mention_time);
 
     // Fetch new updates via long poll method
@@ -54,7 +54,7 @@ async fn main() -> Result<(), Error> {
                         last_date = curr_date;
                     }
 
-                    mention_dao::create_mention(&connection, message.from.id);
+                    mention_repository::create_mention(&connection, message.from.id);
                 }
             }
         }

@@ -1,4 +1,4 @@
-use crate::mentions::NewMention;
+use crate::models::NewMention;
 use crate::schema::mentions;
 use crate::schema::mentions::dsl::*;
 use chrono::NaiveDateTime;
