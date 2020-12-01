@@ -1,6 +1,14 @@
+#[macro_use]
+extern crate diesel;
+
+mod mention_repository;
+mod models;
+mod schema;
+
 use std::env;
 
-use chrono::{DateTime, Duration, NaiveDateTime, Utc};
+use crate::mention_repository::establish_connection;
+use chrono::{DateTime, Duration, NaiveDateTime, TimeZone, Utc};
 use futures::StreamExt;
 use regex::Regex;
 use telegram_bot::*;
@@ -10,11 +18,15 @@ const MINUTES_PER_HOUR: i64 = 60;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let token = env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN not set");
+    let token = env::var("TELEGRAM_BOT_TOKEN_TEST").expect("TELEGRAM_BOT_TOKEN not set");
     let api = Api::new(token);
     let re = Regex::new(r"\b[RrРр][AaUuАа][CcSsСс][TtТт]\b").unwrap();
     let min_time_diff = Duration::minutes(15);
-    let mut last_date: DateTime<Utc> = Utc::now();
+    let connection = establish_connection();
+
+    // pool the latest mention time during app initialization
+    let last_mention_time = mention_repository::lead_earliest_mention_time(&connection);
+    let mut last_date = Utc.from_utc_datetime(&last_mention_time);
 
     // Fetch new updates via long poll method
     let mut stream = api.stream();
@@ -41,6 +53,8 @@ async fn main() -> Result<(), Error> {
 
                         last_date = curr_date;
                     }
+
+                    mention_repository::create_mention(&connection, message.from.id);
                 }
             }
         }
