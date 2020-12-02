@@ -18,7 +18,7 @@ const MINUTES_PER_HOUR: i64 = 60;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let token = env::var("TELEGRAM_BOT_TOKEN_TEST").expect("TELEGRAM_BOT_TOKEN not set");
+    let token = env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN not set");
     let api = Api::new(token);
     let re = Regex::new(r"\b[RrРр][AaUuАа][CcSsСс][TtТт]\b").unwrap();
     let min_time_diff = Duration::minutes(15);
