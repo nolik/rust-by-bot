@@ -11,6 +11,5 @@ chrono = "0.4.15"
 
 tokio = { version = "0.2", features = ["macros", "time", "fs"] }
 futures = "0.3"
-openssl = { version = "0.10.30", features = ["vendored"] }
 
 diesel = { version = "1.4.5", features = ["postgres", "chrono"] }
