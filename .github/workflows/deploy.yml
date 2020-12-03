@@ -15,6 +15,6 @@ jobs:
           heroku_app_name: "rust-by-bot"
           heroku_email: "nolik03@gmail.com"
           usedocker: true
-          docker_heroku_process_type: web
+          docker_heroku_process_type: worker
         env:
           TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
