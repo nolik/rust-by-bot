@@ -5,7 +5,7 @@ authors = ["Ihar Novik <nolik03@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-telegram-bot = "0.7.0"
+telegram-bot = "0.8.0"
 regex = "1.3.9"
 chrono = "0.4.15"
 
